@@ -1,7 +1,7 @@
 name = "EncodedPolyline"
 uuid = "ed38bfee-ba0d-4515-9449-93f191f1bc6a"
 authors = ["Xenoglyphiq contributors"]
-version = "0.0.0"
+version = "0.1.0"
 
 [compat]
 JSON3 = "1.14"
