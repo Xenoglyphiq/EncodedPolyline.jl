@@ -8,6 +8,11 @@ Package name: **`EncodedPolyline`**. Julia 1.10 (LTS) or later. No dependencies.
 
 ## Install
 
+> **Not registered yet.** The first release goes to Julia's General registry; until then, add it from the repo:
+> `Pkg.add(url="https://github.com/Xenoglyphiq/EncodedPolyline.jl")`
+
+Once registered:
+
 ```julia
 using Pkg
 Pkg.add("EncodedPolyline")
