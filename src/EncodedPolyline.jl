@@ -117,17 +117,19 @@ function encode(points::AbstractVector{LonLat}; precision::Integer=5, limits::Li
     scale = scale_for(precision)
     length(points) > limits.max_points && limit("too_many_points")
 
-    # Pass 1: validate and scale every coordinate before any delta (spec error order).
-    for p in points
-        scale_value(p.lat, scale)
-        scale_value(p.lon, scale)
+    # Pass 1: scale every coordinate once, lat then lon, before any delta
+    # (spec error order). Scaling is the costly step, so it is done only here.
+    scaled = Vector{Int64}(undef, 2 * length(points))
+    for (k, p) in enumerate(points)
+        scaled[2k - 1] = scale_value(p.lat, scale)
+        scaled[2k] = scale_value(p.lon, scale)
     end
 
     # Pass 2: deltas, overflow checks and the exact output length.
     len = 0
     prev_lat, prev_lon = Int64(0), Int64(0)
-    for p in points
-        lat, lon = scale_value(p.lat, scale), scale_value(p.lon, scale)
+    for k in 1:2:length(scaled)
+        lat, lon = scaled[k], scaled[k + 1]
         len += encoded_len(checked_delta(lat, prev_lat)) + encoded_len(checked_delta(lon, prev_lon))
         prev_lat, prev_lon = lat, lon
     end
@@ -136,8 +138,8 @@ function encode(points::AbstractVector{LonLat}; precision::Integer=5, limits::Li
     out = Vector{UInt8}(undef, len)
     i = 1
     prev_lat, prev_lon = Int64(0), Int64(0)
-    for p in points
-        lat, lon = scale_value(p.lat, scale), scale_value(p.lon, scale)
+    for k in 1:2:length(scaled)
+        lat, lon = scaled[k], scaled[k + 1]
         i = write_value!(out, i, lat - prev_lat)
         i = write_value!(out, i, lon - prev_lon)
         prev_lat, prev_lon = lat, lon
