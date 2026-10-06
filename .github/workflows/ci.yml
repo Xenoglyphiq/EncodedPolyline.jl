@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: julia ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ['lts', '1']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: ${{ matrix.version }}
+      - uses: julia-actions/cache@v3
+      - uses: julia-actions/julia-buildpkg@v1
+
+      - name: Validate vendored spec
+        run: uv run --no-project --with pyyaml --with jsonschema python .kit/validate.py .spec
+
+      - name: Tests and conformance
+        uses: julia-actions/julia-runtest@v1
+
+      - name: Canonical examples
+        run: |
+          for e in encode_route decode_route precision_6; do
+            julia --project examples/$e.jl
+          done
