@@ -36,3 +36,6 @@ jobs:
           for e in encode_route decode_route precision_6; do
             julia --project examples/$e.jl
           done
+
+      - name: Benchmark runs and round-trips the input (timings not recorded from CI)
+        run: julia --project bench/bench.jl

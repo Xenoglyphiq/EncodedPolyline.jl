@@ -1,6 +1,6 @@
 # Polyline for Julia
 
-Encode and decode lists of coordinates as compact ASCII strings. Implements Google's Encoded Polyline Algorithm Format · Spec v0.1.0 · Conformance: **core ✓ full ✓** (44/44)
+Encode and decode lists of coordinates as compact ASCII strings. Implements Google's Encoded Polyline Algorithm Format · Spec v0.1.1 · Conformance: **core ✓ full ✓** (44/44)
 
 > **Coordinate order:** `LonLat` is `(lon, lat)`; the encoded string stores latitude first. The package converts at the boundary.
 
@@ -80,6 +80,7 @@ There is no io layer: everything works on in-memory strings and vectors.
 |---|---|
 | `julia --project -e 'using Pkg; Pkg.test()'` | Unit tests, type-stability checks and every conformance case |
 | `FUZZ_SECONDS=60 julia --project -e 'using Pkg; Pkg.test()'` | Also fuzz `decode` for 60 s (`FUZZ_SEED` to reproduce a run) |
+| `julia --project bench/bench.jl` | Timings on `.spec/bench/route_100k.polyline` (method in `.spec/bench/README.md`) |
 
 ## Related packages
 
@@ -95,7 +96,7 @@ This package rounds half away from zero, like the widely used Python `polyline` 
 | Encode 100k points | Rust `polyline` | — | — |
 | Decode 100k points | Rust `polyline` | — | — |
 
-Recorded before v0.1.0.
+Measured with `julia --project bench/bench.jl` using the shared method in `.spec/bench/README.md`. Recorded before v0.1.0.
 
 ## License
 
